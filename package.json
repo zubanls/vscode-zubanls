@@ -46,6 +46,7 @@
     "workspaceContains:Pipfile",
     "workspaceContains:mspythonconfig.json"
   ],
+  "publisher": "zuban",
   "capabilities": {
     "untrustedWorkspaces": { "supported": true },
     "virtualWorkspaces": {
