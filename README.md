@@ -4,7 +4,11 @@ A mypy-compatible, high-performance, high-quality Python Language server written
 
 ## Requirements
 
-The extension needs to have pip installed so it can install `zubanls`.
+The extension needs to have `zubanls` installed. It can be installed with:
+
+```
+pip install zuban --break-system-packages --upgrade
+```
 
 ## Documentation
 
