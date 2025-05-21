@@ -2,13 +2,10 @@
   "name": "zubanls",
   "displayName": "ZubanLS",
   "description": "A high-performance, high-quality Python Language server written in Rust",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.74.0"
   },
-  "categories": [
-    "Other"
-  ],
   "activationEvents": [],
   "author": {
     "name": "David Halter"
@@ -25,7 +22,7 @@
     "type": "git",
     "url": "https://github.com/zubanls/vscode-zubanls.git"
   },
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "SEE LICENSE file",
   "bugs": {
     "url": "https://github.com/zubanls/vscode-zubanls/issues",
     "email": "info@zubanls.com"
