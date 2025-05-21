@@ -1,5 +1,9 @@
-Some parts are copied from rust-analyzer. The parts that are not are currently
-proprietary software, but will in the future probably be licensed MIT.
+This is currently proprietary software, but will in the future probably be
+licensed MIT.
+
+Also note that `zubanls` has a separate proprietary license.
+
+Original license (Some parts are copied from rust-analyzer).
 
 -------------------
 
