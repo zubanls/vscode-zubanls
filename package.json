@@ -31,6 +31,28 @@
     "email": "info@zubanls.com"
   },
   "homepage": "https://zubanls.com",
+  "activationEvents": [
+    "onDebugInitialConfigurations",
+    "onLanguage:python",
+    "onCommand:python.copilotSetupTests",
+    "workspaceContains:setup.py",
+    "workspaceContains:pyproject.toml",
+    "workspaceContains:pylock.toml",
+    "workspaceContains:requirements.txt",
+    "workspaceContains:manage.py",
+    "workspaceContains:app.py",
+    "workspaceContains:.venv",
+    "workspaceContains:.conda",
+    "workspaceContains:Pipfile",
+    "workspaceContains:mspythonconfig.json"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": true },
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "In virtual workspaces, resolving imports might not be possible."
+    }
+  },
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
