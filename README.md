@@ -16,3 +16,7 @@ pip install zuban --break-system-packages --upgrade
 ## Documentation
 
 Go to https://docs.zubanls.com
+
+## Repository
+
+https://github.com/zubanls/vscode-zubanls
