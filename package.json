@@ -1,7 +1,7 @@
 {
   "name": "zubanls",
   "displayName": "ZubanLS",
-  "description": "A high-performance, high-quality Python Language server written in Rust",
+  "description": "A Mypy-compatible Python Language Server built in Rust",
   "version": "0.0.4",
   "engines": {
     "vscode": "^1.74.0"
@@ -14,15 +14,16 @@
   "keywords": [
     "python"
   ],
+  "icon": "brandmark.png",
   "galleryBanner": {
-    "color": "#4F121F",
+    "color": "#301f2f",
     "theme": "dark"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/zubanls/vscode-zubanls.git"
   },
-  "license": "SEE LICENSE file",
+  "license": "Proprietary, see LICENSE file",
   "bugs": {
     "url": "https://github.com/zubanls/vscode-zubanls/issues",
     "email": "info@zubanls.com"
