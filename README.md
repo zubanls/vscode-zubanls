@@ -2,8 +2,9 @@
 
 A mypy-compatible, high-performance, high-quality Python Language server written in Rust.
 
-Currently only available as pre-alpha and licenses are necessary. Please
-contact `info@zubanls.com` if you want to test it.
+Visit https://zubanls.com/pricing for pricing information. ZubanLS is free for
+most users, users with larger codebases will require a license after the alpha
+period.
 
 ## Requirements
 
