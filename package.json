@@ -39,7 +39,7 @@
     "type": "git",
     "url": "https://github.com/zubanls/vscode-zubanls.git"
   },
-  "license": "Proprietary, see LICENSE file",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zubanls/vscode-zubanls/issues",
     "email": "info@zubanls.com"
