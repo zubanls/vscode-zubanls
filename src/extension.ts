@@ -9,8 +9,8 @@ let client: LanguageClient;
 
 export function activate() {
   const serverOptions: ServerOptions = {
-    command: "zubanls",
-    args: [],
+    command: "zuban",
+    args: ["server"],
   };
 
   const clientOptions: LanguageClientOptions = {
@@ -18,8 +18,8 @@ export function activate() {
   };
 
   client = new LanguageClient(
-    'zubanls',
-    'ZubanLS',
+    'zuban',
+    'Zuban',
     serverOptions,
     clientOptions
   );

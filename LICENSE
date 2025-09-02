@@ -1,7 +1,7 @@
 This is currently proprietary software, but will in the future probably be
 licensed MIT.
 
-Also note that `zubanls` has a separate proprietary license.
+Also note that `zubanls` has a separate license (AGPL).
 
 Original license (Some parts are copied from rust-analyzer).
 

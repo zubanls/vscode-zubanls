@@ -2,9 +2,7 @@
 
 A mypy-compatible, high-performance, high-quality Python Language server written in Rust.
 
-Visit https://zubanls.com/pricing for pricing information. ZubanLS is free for
-most users, users with larger codebases will require a license after the alpha
-period.
+Activating virtualenvs is a bit tricky from the extension currently. Help would be appreciated.
 
 ## Requirements
 
