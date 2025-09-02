@@ -6,11 +6,27 @@
   "engines": {
     "vscode": "^1.74.0"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onDebugInitialConfigurations",
+    "onLanguage:python",
+    "onCommand:python.copilotSetupTests",
+    "workspaceContains:setup.py",
+    "workspaceContains:pyproject.toml",
+    "workspaceContains:pylock.toml",
+    "workspaceContains:requirements.txt",
+    "workspaceContains:manage.py",
+    "workspaceContains:app.py",
+    "workspaceContains:.venv",
+    "workspaceContains:.conda",
+    "workspaceContains:Pipfile",
+    "workspaceContains:mspythonconfig.json"
+  ],
   "author": {
     "name": "David Halter"
   },
-  "categories": ["Programming Languages"],
+  "categories": [
+    "Programming Languages"
+  ],
   "keywords": [
     "python"
   ],
@@ -29,24 +45,11 @@
     "email": "info@zubanls.com"
   },
   "homepage": "https://zubanls.com",
-  "activationEvents": [
-    "onDebugInitialConfigurations",
-    "onLanguage:python",
-    "onCommand:python.copilotSetupTests",
-    "workspaceContains:setup.py",
-    "workspaceContains:pyproject.toml",
-    "workspaceContains:pylock.toml",
-    "workspaceContains:requirements.txt",
-    "workspaceContains:manage.py",
-    "workspaceContains:app.py",
-    "workspaceContains:.venv",
-    "workspaceContains:.conda",
-    "workspaceContains:Pipfile",
-    "workspaceContains:mspythonconfig.json"
-  ],
   "publisher": "zuban",
   "capabilities": {
-    "untrustedWorkspaces": { "supported": true },
+    "untrustedWorkspaces": {
+      "supported": true
+    },
     "virtualWorkspaces": {
       "supported": "limited",
       "description": "In virtual workspaces, resolving imports might not be possible."
