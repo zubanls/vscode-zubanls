@@ -21,3 +21,7 @@ for ovsx you might additionally need to install the correct node version:
 
 nvm install 20
 nvm use 20
+
+## Test the release locally in VSCode
+
+code --install-extension zubanls-x.x.x.vsix
