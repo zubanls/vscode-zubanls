@@ -19,3 +19,5 @@ Go to https://docs.zubanls.com
 ## Repository
 
 https://github.com/zubanls/vscode-zubanls
+
+Repository for Zuban: https://github.com/zubanls/zuban/
