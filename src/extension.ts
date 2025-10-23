@@ -14,7 +14,7 @@ export function activate() {
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'python' }],
+    documentSelector: [{ scheme: 'file', language: 'python' }, { notebook: 'jupyter-notebook', language: 'python' }],
   };
 
   client = new LanguageClient(
