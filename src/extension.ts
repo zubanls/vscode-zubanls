@@ -14,7 +14,10 @@ export function activate() {
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'python' }],
+    documentSelector: [
+        { scheme: 'file', language: 'python' },
+        { scheme: 'vscode-notebook-cell', language: 'python' }
+    ],
   };
 
   client = new LanguageClient(

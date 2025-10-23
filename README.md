@@ -1,8 +1,8 @@
 # ZubanLS README
 
-A mypy-compatible, high-performance, high-quality Python Language server written in Rust.
+A high-performance Python Language server written in Rust.
 
-Activating virtualenvs is a bit tricky from the extension currently. Help would be appreciated.
+Supports Jupyter Notebooks in VSCode as well.
 
 ## Requirements
 

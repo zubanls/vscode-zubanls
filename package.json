@@ -1,8 +1,8 @@
 {
   "name": "zubanls",
   "displayName": "ZubanLS",
-  "description": "A Mypy-compatible Python Language Server built in Rust",
-  "version": "0.0.6",
+  "description": "A very fast, low-memory Python Language Server built in Rust",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.74.0"
   },

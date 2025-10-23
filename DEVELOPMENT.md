@@ -6,6 +6,10 @@
 
 npm install -g @vscode/vsce
 
+Or run with
+
+npx @vscode/vsce@latest
+
 2. Upgrade the version in `package.json`.
 
 3. Run the following code
