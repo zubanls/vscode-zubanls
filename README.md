@@ -1,4 +1,4 @@
-# ZubanLS README
+# Zuban README
 
 A high-performance Python Language server written in Rust.
 
@@ -6,7 +6,7 @@ Supports Jupyter Notebooks in VSCode as well.
 
 ## Requirements
 
-The extension needs to have `zubanls` installed. It can be installed with:
+The extension needs to have `zuban` installed. It can be installed with:
 
 ```
 pip install zuban --break-system-packages --upgrade
