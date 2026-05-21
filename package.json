@@ -55,6 +55,18 @@
       "description": "In virtual workspaces, resolving imports might not be possible."
     }
   },
+  "contributes": {
+    "configuration": {
+      "title": "ZubanLS",
+      "properties": {
+        "zubanls.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the zuban executable. When empty, ZubanLS resolves zuban next to the selected Python interpreter if that binary exists, otherwise falls back to zuban on PATH."
+        }
+      }
+    }
+  },
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -76,6 +88,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@vscode/python-extension": "^1.0.6",
     "vscode-languageclient": "^9.0.1"
   }
 }
