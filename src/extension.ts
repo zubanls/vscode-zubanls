@@ -14,7 +14,6 @@ import {
   ConfigurationItem,
   ConfigurationParams,
   ConfigurationRequest,
-  DidChangeConfigurationNotification,
   LanguageClient,
   LanguageClientOptions,
   LSPAny,
@@ -94,12 +93,9 @@ export async function activate(context: ExtensionContext) {
 
   const path: string = requireSetting('zuban.executablePath');
 
-  const bundledZubanPath = vscode.Uri.joinPath(
-    context.extensionUri,
-    'bin',
-    // process.platform returns win32 on any windows CPU architecture
-    process.platform === 'win32' ? 'zuban.exe' : 'zuban',
-  );
+  // process.platform returns win32 on any windows CPU architecture
+  const executableName = process.platform === 'win32' ? 'zuban.exe' : 'zuban';
+  const bundledZubanPath = vscode.Uri.joinPath(context.extensionUri, 'bin', executableName);
 
   const pythonEnv = new PythonEnvironment(context);
 
@@ -116,7 +112,7 @@ export async function activate(context: ExtensionContext) {
   // `vscode-languageclient` itself takes when serializing
   // `initializationOptions`) gives us a faithful plain object to merge
   // with.
-  const initialisationOptions = JSON.parse(
+  const initializationOptions = JSON.parse(
     JSON.stringify(vscode.workspace.getConfiguration('zuban') ?? {}),
   );
 
@@ -166,7 +162,7 @@ export async function activate(context: ExtensionContext) {
     },
   };
 
-  function new_client() {
+  function newClient() {
     return new LanguageClient(
       'zuban',
       'Zuban',
@@ -175,14 +171,23 @@ export async function activate(context: ExtensionContext) {
     )
   }
 
+  async function restartClient(clearChannels: boolean = false) {
+    await client.stop();
+    if (clearChannels) {
+      // Clear the output channel but don't dispose it
+      outputChannel.clear();
+      traceOutputChannel.clear();
+    }
+    client = newClient();
+    await client.start();
+  }
+
   // Create the language client and start the client.
-  client = new_client();
+  client = newClient();
 
   pythonEnv
-    .onDidChangeInterpreter(() => {
-      client.sendNotification(DidChangeConfigurationNotification.type, {
-        settings: {},
-      });
+    .onDidChangeInterpreter(async () => {
+      await restartClient();
     })
     .then(disposable => {
       if (disposable) {
@@ -193,21 +198,14 @@ export async function activate(context: ExtensionContext) {
   context.subscriptions.push(
     workspace.onDidChangeConfiguration(async event => {
       if (event.affectsConfiguration('python.zuban')) {
-        client.sendNotification(DidChangeConfigurationNotification.type, {
-          settings: {},
-        });
+        await restartClient();
       }
     }),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('zuban.restart', async () => {
-      await client.stop();
-      // Clear the output channel but don't dispose it
-      outputChannel.clear();
-      traceOutputChannel.clear();
-      client = new_client();
-      await client.start();
+        await restartClient(true);
     }),
   );
 
