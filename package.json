@@ -9,6 +9,7 @@
   "activationEvents": [
     "onDebugInitialConfigurations",
     "onLanguage:python",
+    "onNotebook:jupyter-notebook",
     "onCommand:python.copilotSetupTests",
     "workspaceContains:setup.py",
     "workspaceContains:pyproject.toml",
@@ -25,10 +26,17 @@
     "name": "David Halter"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Linters",
+    "Others"
   ],
   "keywords": [
-    "python"
+    "python",
+    "type",
+    "typecheck",
+    "lint",
+    "analysis",
+    "static analysis"
   ],
   "icon": "brandmark.png",
   "galleryBanner": {
@@ -55,6 +63,172 @@
       "description": "In virtual workspaces, resolving imports might not be possible."
     }
   },
+  "contributes": {
+    "languages": [
+        {
+            "id": "python",
+            "aliases": [
+                "Python"
+            ],
+            "extensions": [
+                ".py",
+                ".pyi"
+            ]
+        }
+    ],
+    "commands": [
+      {
+        "title": "Restart Zuban",
+        "category": "zuban",
+        "command": "zuban.restart"
+      }
+    ],
+    "semanticTokenScopes": [
+        {
+          "language": "python",
+          "scopes": {
+            "variable.readonly": [
+                  "variable.other.constant.python"
+              ]
+            }
+        }
+    ],
+    "configurationDefaults": {
+      "basedpyright.disableLanguageServices": true,
+      "cursorpyright.disableLanguageServices": true,
+      "windsurfPyright.disableLanguageServices": true,
+      "pyrefly.disableLanguageServices": true,
+      "editor.semanticTokenColorCustomizations": {
+          "rules": {
+              "variable.readonly:python": "#4EC9B0"
+          }
+      }
+    },
+    "configuration": {
+      "properties": {
+        "zuban.executablePath": {
+          "type": "string",
+          "default": "",
+          "description": "The path to the binary used for the LSP",
+          "scope": "machine-overridable"
+        },
+        "python.zuban.disableLanguageServices": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, Zuban will not provide other IDE services like completions, hover, definition, etc. To control type errors, see `python.zuban.typeCheckingMode`.",
+          "scope": "resource"
+        },
+        "python.zuban.typeCheckingMode": {
+          "type": "string",
+          "markdownDescription": "Default [mode](https://docs.zubanls.com/en/latest/usage.html#modes) to use if there is no explicit mode in `pyproject.toml`. The default `auto` lets Zuban automatically choose the mode depending on config files.",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "off",
+            "default",
+            "mypy"
+          ],
+          "scope": "resource"
+        },
+        "zuban.trace.server": {
+          "type": "string",
+          "description": "Set to 'verbose' to enable LSP trace in the console",
+          "default": "off",
+          "enum": [
+            "off",
+            "verbose"
+          ]
+        },
+        "python.zuban.disabledLanguageServices": {
+          "type": "object",
+          "default": {},
+          "description": "Disable specific language services. Set individual services to true to disable them.",
+          "scope": "resource",
+          "properties": {
+            "hover": {
+              "type": "boolean",
+              "default": false
+            },
+            "documentSymbol": {
+              "type": "boolean",
+              "default": false
+            },
+            "workspaceSymbol": {
+              "type": "boolean",
+              "default": false
+            },
+            "inlayHint": {
+              "type": "boolean",
+              "default": false
+            },
+            "completion": {
+              "type": "boolean",
+              "default": false
+            },
+            "codeAction": {
+              "type": "boolean",
+              "default": false
+            },
+            "definition": {
+              "type": "boolean",
+              "default": false
+            },
+            "declaration": {
+              "type": "boolean",
+              "default": false
+            },
+            "typeDefinition": {
+              "type": "boolean",
+              "default": false
+            },
+            "references": {
+              "type": "boolean",
+              "default": false
+            },
+            "documentHighlight": {
+              "type": "boolean",
+              "default": false
+            },
+            "rename": {
+              "type": "boolean",
+              "default": false
+            },
+            "codeLens": {
+              "type": "boolean",
+              "default": false
+            },
+            "semanticTokens": {
+              "type": "boolean",
+              "default": false
+            },
+            "signatureHelp": {
+              "type": "boolean",
+              "default": false
+            },
+            "implementation": {
+              "type": "boolean",
+              "default": false
+            },
+            "callHierarchy": {
+              "type": "boolean",
+              "default": false,
+              "description": "Disable call hierarchy feature (Show Incoming/Outgoing Calls)"
+            }
+          }
+        },
+        "python.zuban.diagnosticMode": {
+          "type": "string",
+          "default": "openFilesOnly",
+          "description": "Controls the scope of Zuban's diagnostic analysis. When set to 'openFilesOnly', diagnostics are only provided for files that are currently open in the editor. When set to 'workspace', diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
+          "enum": [
+            "openFilesOnly",
+            "workspace"
+          ],
+          "scope": "resource"
+        }
+      }
+    }
+  },
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -76,6 +250,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@vscode/python-environments": "^1.0.0",
+    "@vscode/python-extension": "^1.0.5",
     "vscode-languageclient": "^9.0.1"
   }
 }
