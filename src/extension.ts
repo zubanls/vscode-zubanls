@@ -28,15 +28,21 @@ async function ensurePythonApi(): Promise<void> {
   }
 }
 
-async function resolveServerOptions(): Promise<{ command: string; args: string[] }> {
+async function resolveServerOptions(): Promise<string> {
+  const zubanBin = process.platform === 'win32' ? 'zuban.exe' : 'zuban';
+
+  // Step 1: Check the zubanls.executablePath
   const r =
     vscode.window.activeTextEditor?.document.uri ?? vscode.workspace.workspaceFolders?.[0]?.uri;
   const ex = vscode.workspace.getConfiguration('zubanls', r).get<string>('executablePath')?.trim();
   if (ex) {
-    return { command: ex, args: ['server'] };
+    if (fs.existsSync(ex)) {
+      return ex;
+    }
+    vscode.window.showWarningMessage(`ZubanLS executable not found at zubanls.executablePath=${ex}`);
   }
 
-  const zubanBin = process.platform === 'win32' ? 'zuban.exe' : 'zuban';
+  // Step 2: Search in the Python extension's environment
   await ensurePythonApi();
   if (pythonApi) {
     try {
@@ -52,7 +58,7 @@ async function resolveServerOptions(): Promise<{ command: string; args: string[]
       for (const d of dirs) {
         const full = path.join(d, zubanBin);
         if (fs.existsSync(full)) {
-          return { command: full, args: ['server'] };
+          return full;
         }
       }
     } catch {
@@ -60,24 +66,32 @@ async function resolveServerOptions(): Promise<{ command: string; args: string[]
     }
   }
 
+  // Step 3: Search in the python.defaultInterpreterPath
   const py = vscode.workspace.getConfiguration('python', r).get<string>('defaultInterpreterPath')?.trim();
   if (py) {
     const full = path.join(path.dirname(py), zubanBin);
     if (fs.existsSync(full)) {
-      return { command: full, args: ['server'] };
+      return full;
     }
   }
-  return { command: 'zuban', args: ['server'] };
+
+  // Step 4: Rely on PATH
+  return 'zuban';
 }
 
 async function start(): Promise<void> {
   if (client) {
     await client.stop();
   }
-  const opts = await resolveServerOptions();
-  outputChannel.appendLine(`Zuban: ${opts.command}`);
-  client = new LanguageClient('zuban', 'Zuban', opts, clientOptions);
-  await client.start();
+  const command = await resolveServerOptions();
+  outputChannel.appendLine(`Zuban: ${command}`);
+  client = new LanguageClient('zuban', 'Zuban', { command, args: ['server'] }, clientOptions);
+  try {
+    await client.start();
+  } catch (e) {
+    vscode.window.showErrorMessage(`Failed to start ZubanLS: ${e instanceof Error ? e.message : e}`);
+    client = undefined;
+  }
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
