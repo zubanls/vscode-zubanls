@@ -141,10 +141,10 @@
         },
         "python.zuban.diagnosticMode": {
           "type": "string",
-          "default": "openFilesOnly",
-          "description": "Controls the scope of Zuban's diagnostic analysis. When set to 'openFilesOnly', diagnostics are only provided for files that are currently open in the editor. When set to 'workspace', diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
+          "default": "open-files-only",
+          "description": "Controls the scope of Zuban's diagnostic analysis. When set to 'open-files-only', diagnostics are only provided for files that are currently open in the editor. When set to 'workspace', diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
           "enum": [
-            "openFilesOnly",
+            "open-files-only",
             "workspace"
           ],
           "scope": "resource"
