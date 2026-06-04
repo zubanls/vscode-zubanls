@@ -52,44 +52,6 @@ export async function activate(context: ExtensionContext) {
 
   const pythonEnv = new PythonEnvironment(context);
 
-  // `getConfiguration` returns a `WorkspaceConfiguration` proxy, not a
-  // plain object: spread (`{...cfg}`) and `Object.assign({}, cfg)` rely
-  // on own enumerable properties and may silently drop the configured
-  // values. JSON-roundtrip via the proxy's `toJSON` (the same path
-  // `vscode-languageclient` itself takes when serializing
-  // `initializationOptions`) gives us a faithful plain object to merge
-  // with.
-  const initializationOptions = JSON.parse(
-    JSON.stringify(vscode.workspace.getConfiguration('python.zuban') ?? {}),
-  );
-
-  // Options to control the language client
-  const clientOptions: LanguageClientOptions = {
-    initializationOptions,
-    // Register the server for Python documents
-    documentSelector: [
-      {scheme: 'file', language: 'python'},
-      // Support for unsaved/untitled files
-      {scheme: 'untitled', language: 'python'},
-      // Support for notebook cells
-      {scheme: 'vscode-notebook-cell', language: 'python'},
-      // Support for in-memory documents like the Positron Console
-      {scheme: 'inmemory', language: 'python'},
-    ],
-    // Support for notebooks
-    // @ts-ignore
-    notebookDocumentSync: {
-      notebookSelector: [
-        {
-          notebook: {notebookType: 'jupyter-notebook'},
-          cells: [{language: 'python'}],
-        },
-      ],
-    },
-    outputChannel: outputChannel,
-    traceOutputChannel: traceOutputChannel
-  };
-
   async function newClient() {
     let serverOptions = await resolveServerOptions(pythonEnv);
 
@@ -99,6 +61,44 @@ export async function activate(context: ExtensionContext) {
         ...process.env,
         ZUBAN_LOG: loggingVerbosity,
       },
+    };
+
+    // `getConfiguration` returns a `WorkspaceConfiguration` proxy, not a
+    // plain object: spread (`{...cfg}`) and `Object.assign({}, cfg)` rely
+    // on own enumerable properties and may silently drop the configured
+    // values. JSON-roundtrip via the proxy's `toJSON` (the same path
+    // `vscode-languageclient` itself takes when serializing
+    // `initializationOptions`) gives us a faithful plain object to merge
+    // with.
+    const initializationOptions = JSON.parse(
+      JSON.stringify(vscode.workspace.getConfiguration('python.zuban') ?? {}),
+    );
+
+    // Options to control the language client
+    const clientOptions: LanguageClientOptions = {
+      initializationOptions,
+      // Register the server for Python documents
+      documentSelector: [
+        {scheme: 'file', language: 'python'},
+        // Support for unsaved/untitled files
+        {scheme: 'untitled', language: 'python'},
+        // Support for notebook cells
+        {scheme: 'vscode-notebook-cell', language: 'python'},
+        // Support for in-memory documents like the Positron Console
+        {scheme: 'inmemory', language: 'python'},
+      ],
+      // Support for notebooks
+      // @ts-ignore
+      notebookDocumentSync: {
+        notebookSelector: [
+          {
+            notebook: {notebookType: 'jupyter-notebook'},
+            cells: [{language: 'python'}],
+          },
+        ],
+      },
+      outputChannel: outputChannel,
+      traceOutputChannel: traceOutputChannel
     };
 
     return new LanguageClient(
