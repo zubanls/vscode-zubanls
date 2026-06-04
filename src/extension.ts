@@ -15,6 +15,7 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
+  Executable,
 } from 'vscode-languageclient/node';
 import {PythonEnvironment} from './python-environment';
 import {
@@ -59,7 +60,7 @@ export async function activate(context: ExtensionContext) {
   // `initializationOptions`) gives us a faithful plain object to merge
   // with.
   const initializationOptions = JSON.parse(
-    JSON.stringify(vscode.workspace.getConfiguration('zuban') ?? {}),
+    JSON.stringify(vscode.workspace.getConfiguration('python.zuban') ?? {}),
   );
 
   // Options to control the language client
@@ -90,7 +91,15 @@ export async function activate(context: ExtensionContext) {
   };
 
   async function newClient() {
-    const serverOptions = await resolveServerOptions(pythonEnv);
+    let serverOptions = await resolveServerOptions(pythonEnv);
+
+    const loggingVerbosity: string = requireSetting('zuban.loggingVerbosity');
+    serverOptions.options = {
+      env: {
+        ...process.env,
+        ZUBAN_LOG: loggingVerbosity,
+      },
+    };
 
     return new LanguageClient(
       'zuban',
@@ -126,7 +135,7 @@ export async function activate(context: ExtensionContext) {
 
   context.subscriptions.push(
     workspace.onDidChangeConfiguration(async event => {
-      if (event.affectsConfiguration('python.zuban')) {
+      if (event.affectsConfiguration('python.zuban') || event.affectsConfiguration('zuban')) {
         await restartClient();
       }
     }),
@@ -167,11 +176,11 @@ export function deactivate(): Thenable<void> | undefined {
   return client.stop();
 }
 
-async function resolveServerOptions(pythonEnv: PythonEnvironment): Promise<ServerOptions> {
+async function resolveServerOptions(pythonEnv: PythonEnvironment): Promise<Executable> {
   // process.platform returns win32 on any windows CPU architecture
   const zubanBin = process.platform === 'win32' ? 'zuban.exe' : 'zuban';
 
-  function newOptions(options: { command?: string, additionalArgs?: string[] } = {}): ServerOptions {
+  function newOptions(options: { command?: string, additionalArgs?: string[] } = {}): Executable {
     return {
       command: options.command || zubanBin,
       args: ["server", ...options.additionalArgs || []],

@@ -148,6 +148,19 @@
             "workspace"
           ],
           "scope": "resource"
+        },
+        "zuban.loggingVerbosity": {
+          "type": "string",
+          "default": "error",
+          "enum": [
+            "error",
+            "warning",
+            "info",
+            "debug",
+            "off"
+          ],
+          "description": "The value is passed to the ZUBAN_LOG environment variable.",
+          "scope": "machine-overridable"
         }
       }
     }
