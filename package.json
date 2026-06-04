@@ -112,13 +112,13 @@
           "description": "The path to the binary used for the LSP",
           "scope": "machine-overridable"
         },
-        "python.zuban.disableLanguageServices": {
+        "zuban.disableLanguageServices": {
           "type": "boolean",
           "default": false,
           "description": "If true, Zuban will not provide other IDE services like completions, hover, definition, etc. To control type errors, see `python.zuban.typeCheckingMode`.",
           "scope": "resource"
         },
-        "python.zuban.typeCheckingMode": {
+        "zuban.typeCheckingMode": {
           "type": "string",
           "markdownDescription": "Default [mode](https://docs.zubanls.com/en/latest/usage.html#modes) to use if there is no explicit Zuban config in `pyproject.toml`. The default `auto` lets Zuban automatically choose the mode depending on config files.",
           "default": "auto",
@@ -139,7 +139,7 @@
             "verbose"
           ]
         },
-        "python.zuban.diagnosticMode": {
+        "zuban.diagnosticMode": {
           "type": "string",
           "default": "openFilesOnly",
           "description": "Controls the scope of Zuban's diagnostic analysis. When set to 'openFilesOnly', diagnostics are only provided for files that are currently open in the editor. When set to 'workspace', diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
