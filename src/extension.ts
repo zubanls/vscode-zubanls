@@ -206,7 +206,7 @@ async function resolveServerOptions(pythonEnv: PythonEnvironment): Promise<Serve
         outputChannel.appendLine(
           `Zuban did not find a Zuban executable at ${zubanPath}, falling back to the default`
         );
-        return newOptions({ command: zubanPath, additionalArgs });
+        return newOptions({ additionalArgs });
       }
     } else {
       outputChannel.appendLine(`Zuban executable ${pythonPath} does not exist`);

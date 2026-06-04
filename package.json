@@ -1,6 +1,6 @@
 {
   "name": "zubanls",
-  "displayName": "ZubanLS",
+  "displayName": "Zuban",
   "description": "A very fast, low-memory Python Language Server built in Rust",
   "version": "0.0.7",
   "engines": {

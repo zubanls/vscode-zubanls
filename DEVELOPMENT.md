@@ -37,7 +37,7 @@ code --install-extension zubanls-x.x.x.vsix
    and Debug view.
 3. In the Extension Development Host window, open a Python workspace where
    `zuban` is installed in the same `venv` as the selected interpreter; open
-   **View → Output → ZubanLS** and confirm the `Zuban: …` line points at the
+   **View → Output → Zuban** and confirm the `Zuban: …` line points at the
    binary you expect.
 4. If you make changes (and `npm run watch` is running) you can reload the
    extension development host (Ctrl+R).
