@@ -109,13 +109,13 @@
         "zuban.executablePath": {
           "type": "string",
           "default": "",
-          "description": "The path to the binary used for the LSP",
+          "markdownDescription": "The path to the binary used for the LSP",
           "scope": "machine-overridable"
         },
         "python.zuban.disableLanguageServices": {
           "type": "boolean",
           "default": false,
-          "description": "If true, Zuban will not provide other IDE services like completions, hover, definition, etc. To control type errors, see `python.zuban.typeCheckingMode`.",
+          "markdownDescription": "If true, Zuban will not provide other IDE services like completions, hover, definition, etc. To control type errors, see `python.zuban.typeCheckingMode`.",
           "scope": "resource"
         },
         "python.zuban.typeCheckingMode": {
@@ -132,7 +132,7 @@
         },
         "zuban.trace.server": {
           "type": "string",
-          "description": "Set to 'verbose' to enable LSP trace in the console",
+          "markdownDescription": "Set to `verbose` to enable LSP trace in the console",
           "default": "off",
           "enum": [
             "off",
@@ -142,7 +142,7 @@
         "python.zuban.diagnosticMode": {
           "type": "string",
           "default": "open-files-only",
-          "description": "Controls the scope of Zuban's diagnostic analysis. When set to 'open-files-only', diagnostics are only provided for files that are currently open in the editor. When set to 'workspace', diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
+          "markdownDescription": "Controls the scope of Zuban's diagnostic analysis. When set to `open-files-only`, diagnostics are only provided for files that are currently open in the editor. When set to `workspace`, diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
           "enum": [
             "open-files-only",
             "workspace"
@@ -159,7 +159,7 @@
             "debug",
             "off"
           ],
-          "description": "The value is passed to the ZUBAN_LOG environment variable.",
+          "markdownDescription": "The value is passed to the `ZUBAN_LOG` environment variable.",
           "scope": "machine-overridable"
         }
       }
