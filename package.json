@@ -65,16 +65,16 @@
   },
   "contributes": {
     "languages": [
-        {
-            "id": "python",
-            "aliases": [
-                "Python"
-            ],
-            "extensions": [
-                ".py",
-                ".pyi"
-            ]
-        }
+      {
+        "id": "python",
+        "aliases": [
+          "Python"
+        ],
+        "extensions": [
+          ".py",
+          ".pyi"
+        ]
+      }
     ],
     "commands": [
       {
@@ -84,14 +84,14 @@
       }
     ],
     "semanticTokenScopes": [
-        {
-          "language": "python",
-          "scopes": {
-            "variable.readonly": [
-                  "variable.other.constant.python"
-              ]
-            }
-        }
+      {
+        "language": "python",
+        "scopes": {
+          "variable.readonly": [
+              "variable.other.constant.python"
+            ]
+          }
+      }
     ],
     "configurationDefaults": {
       "basedpyright.disableLanguageServices": true,
@@ -99,9 +99,9 @@
       "windsurfPyright.disableLanguageServices": true,
       "pyrefly.disableLanguageServices": true,
       "editor.semanticTokenColorCustomizations": {
-          "rules": {
-              "variable.readonly:python": "#4EC9B0"
-          }
+        "rules": {
+          "variable.readonly:python": "#4EC9B0"
+        }
       }
     },
     "configuration": {
