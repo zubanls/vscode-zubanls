@@ -15,7 +15,6 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  Executable,
 } from 'vscode-languageclient/node';
 import {PythonEnvironment} from './python-environment';
 import {
@@ -53,16 +52,6 @@ export async function activate(context: ExtensionContext) {
   const pythonEnv = new PythonEnvironment(context);
 
   async function newClient() {
-    let serverOptions = await resolveServerOptions(pythonEnv);
-
-    const loggingVerbosity: string = requireSetting('zuban.loggingVerbosity');
-    serverOptions.options = {
-      env: {
-        ...process.env,
-        ZUBAN_LOG: loggingVerbosity,
-      },
-    };
-
     // `getConfiguration` returns a `WorkspaceConfiguration` proxy, not a
     // plain object: spread (`{...cfg}`) and `Object.assign({}, cfg)` rely
     // on own enumerable properties and may silently drop the configured
@@ -70,9 +59,13 @@ export async function activate(context: ExtensionContext) {
     // `vscode-languageclient` itself takes when serializing
     // `initializationOptions`) gives us a faithful plain object to merge
     // with.
-    const initializationOptions = JSON.parse(
+    let initializationOptions: InitOptions = JSON.parse(
       JSON.stringify(vscode.workspace.getConfiguration('python.zuban') ?? {}),
     );
+
+    const command = await findCommand(pythonEnv, initializationOptions);
+
+    const loggingVerbosity: string = requireSetting('zuban.loggingVerbosity');
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
@@ -104,7 +97,16 @@ export async function activate(context: ExtensionContext) {
     return new LanguageClient(
       'zuban',
       'Zuban',
-      serverOptions,
+      {
+        command,
+        args: ["server"],
+        options: {
+          env: {
+            ...process.env,
+            ZUBAN_LOG: loggingVerbosity,
+          }
+        }
+      },
       clientOptions,
     )
   }
@@ -176,22 +178,22 @@ export function deactivate(): Thenable<void> | undefined {
   return client.stop();
 }
 
-async function resolveServerOptions(pythonEnv: PythonEnvironment): Promise<Executable> {
+interface InitOptions {
+    pythonExecutable?: string
+    type_checking_mode?: string,
+    diagnostic_mode?: string,
+    disable_language_services?: boolean,
+}
+
+async function findCommand(pythonEnv: PythonEnvironment, initializationOptions: InitOptions): Promise<string> {
   // process.platform returns win32 on any windows CPU architecture
   const zubanBin = process.platform === 'win32' ? 'zuban.exe' : 'zuban';
-
-  function newOptions(options: { command?: string, additionalArgs?: string[] } = {}): Executable {
-    return {
-      command: options.command || zubanBin,
-      args: ["server", ...options.additionalArgs || []],
-    }
-  }
 
   // Step 1: Check the zubanls.executablePath
   const ex: string = requireSetting('zuban.executablePath');
   if (ex) {
     if (fs.existsSync(ex)) {
-      return newOptions({ command: ex });
+      return ex;
     }
     vscode.window.showWarningMessage(`zuban executable not found at zubanls.executablePath=${ex}`);
   }
@@ -200,30 +202,30 @@ async function resolveServerOptions(pythonEnv: PythonEnvironment): Promise<Execu
     vscode.window.activeTextEditor?.document.uri ?? vscode.workspace.workspaceFolders?.[0]?.uri;
 
   // Step 2: Search in the Python extension's environment
-  const pythonPath = await pythonEnv.getInterpreterPath(scopeUri);
-  if (pythonPath) {
-    outputChannel.appendLine(`Zuban tries to work with environment ${pythonPath}`);
-    if (fs.existsSync(pythonPath)) {
+  const pythonExecutable = await pythonEnv.getInterpreterPath(scopeUri);
+  if (pythonExecutable) {
+    outputChannel.appendLine(`Zuban tries to work with environment ${pythonExecutable}`);
+    if (fs.existsSync(pythonExecutable)) {
+      initializationOptions.pythonExecutable = pythonExecutable;
+
       // Try to use the Zuban executable from that environment.
-      const executableDir = path.dirname(pythonPath);
+      const executableDir = path.dirname(pythonExecutable);
       const zubanPath = path.join(executableDir, zubanBin);
-      const additionalArgs = ["--python-executable", pythonPath];
       if (fs.existsSync(zubanPath)) {
         outputChannel.appendLine(`Zuban found a Zuban executable at ${zubanPath}`);
-        return newOptions({ command: zubanPath, additionalArgs });
+        return zubanPath;
       } else {
         outputChannel.appendLine(
           `Zuban did not find a Zuban executable at ${zubanPath}, falling back to the default`
         );
-        return newOptions({ additionalArgs });
       }
     } else {
-      outputChannel.appendLine(`Zuban executable ${pythonPath} does not exist`);
+      outputChannel.appendLine(`Zuban executable ${pythonExecutable} does not exist`);
     }
   }
   // const bundledZubanPath = vscode.Uri.joinPath(context.extensionUri, 'bin', executableName);
   // return bundledZubanPath.fsPath;
 
   // Step 3: Rely on PATH
-  return newOptions();
+  return zubanBin;
 }
