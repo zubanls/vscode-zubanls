@@ -8,13 +8,12 @@
  */
 
 import {ExtensionContext, workspace} from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as vscode from 'node:vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
-  ServerOptions,
 } from 'vscode-languageclient/node';
 import {PythonEnvironment} from './python-environment';
 import {
@@ -28,7 +27,7 @@ let traceOutputChannel: vscode.OutputChannel;
 /// Get a setting at the path, or throw an error if it's not set.
 function requireSetting<T>(path: string): T {
   const ret: T | undefined = vscode.workspace.getConfiguration().get(path);
-  if (ret == undefined) {
+  if (ret === undefined) {
     throw new Error(`Setting "${path}" was not configured`);
   }
   return ret;
