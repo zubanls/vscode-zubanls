@@ -88,9 +88,9 @@
         "language": "python",
         "scopes": {
           "variable.readonly": [
-              "variable.other.constant.python"
-            ]
-          }
+            "variable.other.constant.python"
+          ]
+        }
       }
     ],
     "configurationDefaults": {
@@ -175,6 +175,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.16",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@types/vscode": "^1.74.0",
