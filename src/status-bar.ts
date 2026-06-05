@@ -15,7 +15,7 @@ let statusBarItem: vscode.StatusBarItem;
 
 /* Shape of `zuban/textDocument/status` */
 type Status = {
-    version: integer;
+    version: number;
     zuban_version: string;
     zuban_path: string;
     type_checking_enabled: boolean;
@@ -80,7 +80,7 @@ export async function updateStatusBar(client: LanguageClient) {
     // one command we use rather than blanket-trusting everything.
     md.isTrusted = { enabledCommands: ["workbench.action.openSettings"] };
 
-    if (!type_checking_enabled) {
+    if (!status.type_checking_enabled) {
         md.appendMarkdown(
             '\n\nZuban diagnostics are suppressed because [`python.zuban.typeCheckingMode`](command:workbench.action.openSettings?["python.zuban.typeCheckingMode"]). \nChange this setting to re-enable diagnostics.',
         );
