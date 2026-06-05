@@ -19,8 +19,10 @@ import { triggerMsPythonRefreshLanguageServersIfInstalled } from "./extension-in
 import { PythonEnvironment } from "./python-environment";
 
 let client: LanguageClient;
-let outputChannel: vscode.OutputChannel;
+export let outputChannel: vscode.OutputChannel;
 let traceOutputChannel: vscode.OutputChannel;
+
+import { getStatusBarItem, updateStatusBar } from "./status-bar";
 
 /// Get a setting at the path, or throw an error if it's not set.
 function requireSetting<T>(path: string): T {
@@ -115,10 +117,19 @@ export async function activate(context: ExtensionContext) {
 		}
 		client = await newClient();
 		await client.start();
+		await updateStatusBar(client);
 	}
 
 	// Create the language client and start the client.
 	client = await newClient();
+	await client.start();
+	await updateStatusBar(client);
+
+	context.subscriptions.push(
+		vscode.window.onDidChangeActiveTextEditor(async () => {
+			await updateStatusBar(client);
+		}),
+	);
 
 	pythonEnv
 		.onDidChangeInterpreter(async () => {
@@ -159,7 +170,11 @@ export async function activate(context: ExtensionContext) {
 	});
 
 	// Start the client. This will also launch the server
-	await client.start();
+
+	const statusBarItem = getStatusBarItem();
+	if (statusBarItem) {
+		context.subscriptions.push(statusBarItem);
+	}
 }
 
 export function deactivate(): Thenable<void> | undefined {
