@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import * as assert from "assert:node";
+import * as assert from "node:assert";
 import * as vscode from "vscode";
 
 suite("Extension Test Suite", () => {

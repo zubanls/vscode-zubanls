@@ -9,7 +9,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as vscode from "node:vscode";
+import * as vscode from "vscode";
 import { type ExtensionContext, workspace } from "vscode";
 import {
 	LanguageClient,
