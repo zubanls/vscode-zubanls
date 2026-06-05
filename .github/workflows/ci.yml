@@ -12,6 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+
+      - name: Install Zuban
+        run: pip install zuban
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
