@@ -16,9 +16,9 @@ let statusBarItem: vscode.StatusBarItem;
 /* Shape of `zuban/textDocument/status` */
 type Status = {
     version: number;
-    zuban_version: string;
-    zuban_path: string;
-    type_checking_enabled: boolean;
+    zubanVersion: string;
+    zubanPath: string;
+    typeCheckingEnabled: boolean;
     mode: string;
 };
 
@@ -56,20 +56,23 @@ export async function updateStatusBar(client: LanguageClient) {
     }
 
     let mode: string;
-    if (!status.type_checking_enabled) {
+    if (!status.typeCheckingEnabled) {
         mode = "off";
     } else {
         mode = status.mode;
     }
-    statusBarItem.text = `Zuban: (${mode})`;
+    statusBarItem.text = `Zuban: ${mode}`;
 
     const tooltip = `
-        [Docs](https://docs.zubanls.com/)
-        [VSCode Settings](command:workbench.action.openSettings?["@ext:zubanls.zuban"])
+### Zuban
 
-        Zuban version: ${status.zuban_version}
-        Zuban executable path: ${status.zuban_path}
-        `;
+- [Docs](https://docs.zubanls.com/)
+- [VSCode Settings](command:workbench.action.openSettings?["@ext:zubanls.zuban"])
+- [Website](https://zubanls.com)
+- Zuban version: ${status.zubanVersion}
+- Zuban executable path: ${status.zubanPath}
+
+---`;
 
     const md = new vscode.MarkdownString(tooltip);
     // The kill-switch and IDE-override tooltips embed
@@ -80,7 +83,7 @@ export async function updateStatusBar(client: LanguageClient) {
     // one command we use rather than blanket-trusting everything.
     md.isTrusted = { enabledCommands: ["workbench.action.openSettings"] };
 
-    if (!status.type_checking_enabled) {
+    if (!status.typeCheckingEnabled) {
         md.appendMarkdown(
             '\n\nZuban diagnostics are suppressed because [`python.zuban.typeCheckingMode`](command:workbench.action.openSettings?["python.zuban.typeCheckingMode"]). \nChange this setting to re-enable diagnostics.',
         );
