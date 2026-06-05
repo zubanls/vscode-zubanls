@@ -5,13 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import * as assert from 'assert';
-import * as vscode from 'vscode';
+import * as assert from "assert:node";
+import * as vscode from "vscode";
 
-suite('Extension Test Suite', () => {
-	const extension: vscode.Extension<unknown> | undefined = vscode.extensions.getExtension('zuban.zubanls');
+suite("Extension Test Suite", () => {
+	const extension: vscode.Extension<unknown> | undefined =
+		vscode.extensions.getExtension("zuban.zubanls");
 
-	test('Test activation', async function () {
+	test("Test activation", async function () {
 		// On macos-13, we've noticed successful test activation take up to 3500ms.
 		this.timeout(10000);
 		await extension?.activate();

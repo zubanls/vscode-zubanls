@@ -173,7 +173,8 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test",
-    "auto-format": "biome check --write ./src"
+    "check-format": "biome check ./src",
+    "auto-format": "npm run check-format -- --write"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
