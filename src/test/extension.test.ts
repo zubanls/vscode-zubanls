@@ -9,13 +9,13 @@ import * as assert from "node:assert";
 import * as vscode from "vscode";
 
 suite("Extension Test Suite", () => {
-	const extension: vscode.Extension<unknown> | undefined =
-		vscode.extensions.getExtension("zuban.zubanls");
+    const extension: vscode.Extension<unknown> | undefined =
+        vscode.extensions.getExtension("zuban.zubanls");
 
-	test("Test activation", async function () {
-		// On macos-13, we've noticed successful test activation take up to 3500ms.
-		this.timeout(10000);
-		await extension?.activate();
-		assert.ok(true);
-	});
+    test("Test activation", async function () {
+        // On macos-13, we've noticed successful test activation take up to 3500ms.
+        this.timeout(10000);
+        await extension?.activate();
+        assert.ok(true);
+    });
 });

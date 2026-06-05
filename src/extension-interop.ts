@@ -18,22 +18,18 @@ import * as vscode from "vscode";
  * We then change the setting back so we don't end up messing up the users settings.
  */
 export async function triggerMsPythonRefreshLanguageServersIfInstalled() {
-	if (!vscode.extensions.getExtension("ms-python.python")) {
-		return;
-	}
-	const config = vscode.workspace.getConfiguration("python");
-	const setting = "languageServer";
-	const previousSetting = config.get(setting);
-	// without the target, we will crash here with "Unable to write to Workspace Settings
-	// because no workspace is opened. Please open a workspace first and try again."
-	await config.update(
-		setting,
-		previousSetting === "None" ? "Default" : "None",
-		vscode.ConfigurationTarget.Global,
-	);
-	await config.update(
-		setting,
-		previousSetting,
-		vscode.ConfigurationTarget.Global,
-	);
+    if (!vscode.extensions.getExtension("ms-python.python")) {
+        return;
+    }
+    const config = vscode.workspace.getConfiguration("python");
+    const setting = "languageServer";
+    const previousSetting = config.get(setting);
+    // without the target, we will crash here with "Unable to write to Workspace Settings
+    // because no workspace is opened. Please open a workspace first and try again."
+    await config.update(
+        setting,
+        previousSetting === "None" ? "Default" : "None",
+        vscode.ConfigurationTarget.Global,
+    );
+    await config.update(setting, previousSetting, vscode.ConfigurationTarget.Global);
 }
