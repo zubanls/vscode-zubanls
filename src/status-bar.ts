@@ -19,6 +19,7 @@ type Status = {
     zubanVersion: string;
     zubanPath: string;
     typeCheckingEnabled: boolean;
+    fileErrorsIgnoredReason: string | null;
     mode: string;
 };
 
@@ -56,10 +57,17 @@ export async function updateStatusBar(client: LanguageClient) {
     }
 
     let mode: string;
+    let modeNode: string;
     if (!status.typeCheckingEnabled) {
         mode = "off";
+        modeNode =
+            'Zuban **diagnostics** are **suppressed** because [`python.zuban.typeCheckingMode`](command:workbench.action.openSettings?["python.zuban.typeCheckingMode"]). Change this setting to re-enable diagnostics.';
+    } else if (status.fileErrorsIgnoredReason !== null) {
+        mode = "excluded";
+        modeNode = `Zuban **diagnostics** are **suppressed** in this specific file. ${status.fileErrorsIgnoredReason}. Change this setting to re-enable diagnostics.`;
     } else {
         mode = status.mode;
+        modeNode = `The current Zuban [mode](https://docs.zubanls.com/en/latest/usage.html#modes) is **${mode}**.`;
     }
     statusBarItem.text = `Zuban: ${mode}`;
 
@@ -72,7 +80,10 @@ export async function updateStatusBar(client: LanguageClient) {
 - Zuban version: ${status.zubanVersion}
 - Zuban executable path: ${status.zubanPath}
 
----`;
+---
+
+${modeNode}
+`;
 
     const md = new vscode.MarkdownString(tooltip);
     // The kill-switch and IDE-override tooltips embed
@@ -82,12 +93,6 @@ export async function updateStatusBar(client: LanguageClient) {
     // `isTrusted` allow-lists them — narrow the allow-list to just the
     // one command we use rather than blanket-trusting everything.
     md.isTrusted = { enabledCommands: ["workbench.action.openSettings"] };
-
-    if (!status.typeCheckingEnabled) {
-        md.appendMarkdown(
-            '\n\nZuban diagnostics are suppressed because [`python.zuban.typeCheckingMode`](command:workbench.action.openSettings?["python.zuban.typeCheckingMode"]). \nChange this setting to re-enable diagnostics.',
-        );
-    }
 
     statusBarItem.tooltip = md;
 
