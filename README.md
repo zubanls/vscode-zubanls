@@ -17,7 +17,10 @@ virtualenv is activated in VSCode, Zuban will be loaded from there.
 
 ## Documentation
 
-Go to https://docs.zubanls.com
+For general documetation about Zuban pease visit https://docs.zubanls.com.
+
+There are a few settings in Zuban like disabling type checking, that should be
+self-documenting.
 
 ## Repository
 
