@@ -185,9 +185,9 @@ export function deactivate(): Thenable<void> | undefined {
 
 interface InitOptions {
     pythonExecutable?: string;
-    type_checking_mode?: string;
-    diagnostic_mode?: string;
-    disable_language_services?: boolean;
+    typeCheckingMode?: string;
+    diagnosticMode?: string;
+    disableLanguageServices?: boolean;
 }
 
 async function findCommand(
