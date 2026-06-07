@@ -19,8 +19,16 @@ virtualenv is activated in VSCode, Zuban will be loaded from there.
 
 For general documetation about Zuban pease visit https://docs.zubanls.com.
 
-There are a few settings in Zuban like disabling type checking, that should be
-self-documenting.
+There are a few settings VSCode related settings:
+
+- `python.zuban.typeCheckingMode` to be able to only use completions/goto and
+  not type checking and also choose the default mypy mode
+- `python.zuban.disableLanguageServices` to make it possible to only use type checking
+- `python.zuban.diagnosticMode` to enable VSCode to query the workspace diagnostics
+- `zuban.executablePath` to enable a custom Zuban executable
+- `zuban.loggingVerbosity` - to pass a value to the `ZUBAN_LOG` environment variable
+
+All Zuban related type checking settings are configured in `pyproject.toml` or `mypy.ini`.
 
 ## Repository
 

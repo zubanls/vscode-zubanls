@@ -2,7 +2,7 @@
   "name": "zubanls",
   "displayName": "Zuban",
   "description": "A very fast, low-memory Python Language Server built in Rust",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.74.0"
   },
