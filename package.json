@@ -1,6 +1,6 @@
 {
   "name": "zubanls",
-  "displayName": "ZubanLS",
+  "displayName": "Zuban",
   "description": "A very fast, low-memory Python Language Server built in Rust",
   "version": "0.0.7",
   "engines": {
@@ -9,6 +9,7 @@
   "activationEvents": [
     "onDebugInitialConfigurations",
     "onLanguage:python",
+    "onNotebook:jupyter-notebook",
     "onCommand:python.copilotSetupTests",
     "workspaceContains:setup.py",
     "workspaceContains:pyproject.toml",
@@ -25,10 +26,17 @@
     "name": "David Halter"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Linters",
+    "Others"
   ],
   "keywords": [
-    "python"
+    "python",
+    "type",
+    "typecheck",
+    "lint",
+    "analysis",
+    "static analysis"
   ],
   "icon": "brandmark.png",
   "galleryBanner": {
@@ -55,6 +63,108 @@
       "description": "In virtual workspaces, resolving imports might not be possible."
     }
   },
+  "contributes": {
+    "languages": [
+      {
+        "id": "python",
+        "aliases": [
+          "Python"
+        ],
+        "extensions": [
+          ".py",
+          ".pyi"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "title": "Restart Zuban",
+        "category": "zuban",
+        "command": "zuban.restart"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "python",
+        "scopes": {
+          "variable.readonly": [
+            "variable.other.constant.python"
+          ]
+        }
+      }
+    ],
+    "configurationDefaults": {
+      "basedpyright.disableLanguageServices": true,
+      "cursorpyright.disableLanguageServices": true,
+      "windsurfPyright.disableLanguageServices": true,
+      "pyrefly.disableLanguageServices": true,
+      "editor.semanticTokenColorCustomizations": {
+        "rules": {
+          "variable.readonly:python": "#4EC9B0"
+        }
+      }
+    },
+    "configuration": {
+      "properties": {
+        "zuban.executablePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The path to the binary used for the LSP",
+          "scope": "machine-overridable"
+        },
+        "python.zuban.disableLanguageServices": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "If true, Zuban will not provide other IDE services like completions, hover, definition, etc. To control type errors, see `python.zuban.typeCheckingMode`.",
+          "scope": "resource"
+        },
+        "python.zuban.typeCheckingMode": {
+          "type": "string",
+          "markdownDescription": "Default [mode](https://docs.zubanls.com/en/latest/usage.html#modes) to use if there is no explicit Zuban config in `pyproject.toml`. The default `auto` lets Zuban automatically choose the mode depending on config files.",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "off",
+            "default",
+            "mypy"
+          ],
+          "scope": "resource"
+        },
+        "zuban.trace.server": {
+          "type": "string",
+          "markdownDescription": "Set to `verbose` to enable LSP trace in the console",
+          "default": "off",
+          "enum": [
+            "off",
+            "verbose"
+          ]
+        },
+        "python.zuban.diagnosticMode": {
+          "type": "string",
+          "default": "open-files-only",
+          "markdownDescription": "Controls the scope of Zuban's diagnostic analysis. When set to `open-files-only`, diagnostics are only provided for files that are currently open in the editor. When set to `workspace`, diagnostics are computed and published for all files in the workspace, which can be very slow for big projects.",
+          "enum": [
+            "open-files-only",
+            "workspace"
+          ],
+          "scope": "resource"
+        },
+        "zuban.loggingVerbosity": {
+          "type": "string",
+          "default": "error",
+          "enum": [
+            "error",
+            "warning",
+            "info",
+            "debug",
+            "off"
+          ],
+          "markdownDescription": "The value is passed to the `ZUBAN_LOG` environment variable.",
+          "scope": "machine-overridable"
+        }
+      }
+    }
+  },
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -62,9 +172,12 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "check-format": "biome check ./src",
+    "auto-format": "npm run check-format -- --write"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.16",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@types/vscode": "^1.74.0",
@@ -76,6 +189,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@vscode/python-environments": "^1.0.0",
+    "@vscode/python-extension": "^1.0.5",
     "vscode-languageclient": "^9.0.1"
   }
 }
