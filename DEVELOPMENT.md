@@ -16,15 +16,15 @@ npx @vscode/vsce@latest
 
 
 ```
-vsce package
-vsce publish
+npx vsce package
+npx vsce publish
 npx ovsx publish
 ```
 
 for ovsx you might additionally need to install the correct node version:
 
-nvm install 20
-nvm use 20
+nvm install 22
+nvm use 22
 
 ## Test the release locally in VSCode
 
