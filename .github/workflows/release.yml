@@ -130,6 +130,7 @@ jobs:
 
   # Phase 3: Publish the built extension to the Marketplace.
   publish-code-marketplace:
+    environment: Release
     name: "Publish (Code Marketplace)"
     needs: ["build"]
     runs-on: ubuntu-latest
@@ -188,6 +189,7 @@ jobs:
         run: npx vsce publish --pat "${{ secrets.MARKETPLACE_TOKEN }}" --packagePath ./dist/zubanls-*.vsix $PRE_RELEASE
 
   publish-openvsx:
+    environment: Release
     name: "Publish (OpenVSX)"
     needs: ["build"]
     runs-on: ubuntu-latest
