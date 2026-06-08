@@ -75,7 +75,7 @@ export async function updateStatusBar(client: LanguageClient) {
 ### Zuban
 
 - [Docs](https://docs.zubanls.com/)
-- [VSCode Settings](command:workbench.action.openSettings?["@ext:zubanls.zuban"])
+- [VSCode Settings](command:workbench.action.openSettings?["@ext:zuban.zubanls"])
 - [Website](https://zubanls.com)
 - Zuban version: ${status.zubanVersion}
 - Zuban executable path: ${status.zubanPath}
