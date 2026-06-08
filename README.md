@@ -6,14 +6,11 @@ Supports Jupyter Notebooks in VSCode as well.
 
 ## Requirements
 
-The extension needs to have `zuban` installed. It can be installed with:
-
-```
-pip install zuban --break-system-packages --upgrade
-```
+Zuban should work out of the bugs, since it is bundled with the extension.
 
 Alternatively you can install zuban in a virtual environment. If that specific
-virtualenv is activated in VSCode, Zuban will be loaded from there.
+virtualenv is activated in VSCode, Zuban will be loaded from there, so you can
+use a specific Zuban version.
 
 ## Documentation
 

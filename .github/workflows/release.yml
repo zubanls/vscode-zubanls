@@ -17,7 +17,6 @@ jobs:
 
   # Phase 1: Generate a variable to understand if we're doing a pre-release.
   pre-release-check:
-    name: "Figure out if we're building a pre-release"
     runs-on: ubuntu-latest
     outputs:
       pre-release: ${{ steps.pre-release-generator.outputs.pre-release }}
@@ -74,7 +73,7 @@ jobs:
             arch: aarch64
 
     name: Build (${{ matrix.target }})
-    needs: ["pre-release-check"]
+    needs: ["tests", "pre-release-check"]
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
 
@@ -133,7 +132,9 @@ jobs:
       - name: Install Node dependencies.
         run: npm ci
 
-      - name: Package Extension (release)
+      - run: mkdir ./dist
+
+      - name: Package Extension
         shell: bash
         run: npx vsce package -o "./dist/zubanls-${{ matrix.code-target }}.vsix" --target ${{ matrix.code-target }}
 
