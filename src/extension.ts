@@ -104,7 +104,11 @@ export async function activate(context: ExtensionContext) {
     }
 
     async function restartClient(clearChannels: boolean = false) {
-        await client.stop();
+        try {
+            await client.stop();
+        } catch (error) {
+            console.error("Error stopping client:", error);
+        }
         if (clearChannels) {
             // Clear the output channel but don't dispose it
             outputChannel.clear();
