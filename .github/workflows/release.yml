@@ -1,0 +1,263 @@
+# This was initially copied from ty-vscode and then modified, the license is in the LICENSE
+name: Release
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+  workflow_dispatch:
+
+# We only want one release process running for each tag.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    uses: ./.github/workflows/ci.yml
+
+  # Phase 1: Generate a variable to understand if we're doing a pre-release.
+  pre-release-check:
+    name: "Figure out if we're building a pre-release"
+    runs-on: ubuntu-latest
+    outputs:
+      pre-release: ${{ steps.pre-release-generator.outputs.pre-release }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Generate pre-release variable
+        id: pre-release-generator
+        run: |
+          version=$(jq -r .version package.json)
+          if [[ "$version" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            pre_release=""
+          else
+            pre_release="--pre-release"
+          fi
+          echo "pre-release: ${pre_release}"
+          echo "pre-release=${pre_release}" >> "$GITHUB_OUTPUT"
+
+  # Phase 2: Build the extension on all platforms.
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            code-target: win32-x64
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            code-target: win32-arm64
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            code-target: linux-x64
+          - os: ubuntu-22.04
+            target: aarch64-unknown-linux-gnu
+            code-target: linux-arm64
+            arch: aarch64
+          - os: ubuntu-22.04
+            target: arm-unknown-linux-gnueabihf
+            code-target: linux-armhf
+            arch: armv7
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            code-target: darwin-x64
+          - os: macos-14
+            target: aarch64-apple-darwin
+            code-target: darwin-arm64
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
+            code-target: alpine-x64
+            arch: x86_64
+          - os: ubuntu-22.04
+            target: aarch64-unknown-linux-musl
+            code-target: alpine-arm64
+            arch: aarch64
+
+    name: Build (${{ matrix.target }})
+    needs: ["pre-release-check"]
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Install Python dependencies (including zuban's native binary).
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.x"
+
+      # ARM builds on macOS, which should select zuban's universal binary.
+      - run: arch -arm64 python -m pip install -t ./bundled/libs --implementation py --no-deps --upgrade -r ./requirements.txt
+        if: ${{ startsWith(matrix.os, 'macos') && startsWith(matrix.target, 'aarch64') }}
+
+      # x86_64 builds on macOS, which should select zuban's x86_64 binary.
+      - run: arch -x86_64 python -m pip install -t ./bundled/libs --implementation py --no-deps --upgrade -r ./requirements.txt
+        if: ${{ startsWith(matrix.os, 'macos') && startsWith(matrix.target, 'x86_64') }}
+
+      # ARM builds on Ubuntu, which should select zuban's ARM binary.
+      - uses: uraimo/run-on-arch-action@f9b26e3a1a408d5fd530d20c17b9f3f4428ff8d9 # v3.1.0
+        if: ${{ startsWith(matrix.os, 'ubuntu') && !startsWith(matrix.target, 'x86_64') && !endsWith(matrix.target, 'musl') }}
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ubuntu20.04
+          install: |
+            apt-get update
+            apt-get install -y --no-install-recommends python3 python3-pip
+            pip3 install -U pip
+          run: |
+            python3 -m pip install -t ./bundled/libs --implementation py --no-deps --upgrade -r ./requirements.txt
+
+      # Alpine builds, which should select zuban's musl binaries.
+      - uses: jirutka/setup-alpine@ae3b3ddba35054804fc4a3507b519fa7e8152050 # v1.4.1
+        if: ${{ startsWith(matrix.os, 'ubuntu') && endsWith(matrix.target, 'musl') }}
+        with:
+          arch: ${{ matrix.arch }}
+      - shell: alpine.sh --root {0}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && endsWith(matrix.target, 'musl') }}
+        run: |
+          apk add --no-cache python3 py3-pip
+          python3 -m pip install -t ./bundled/libs --implementation py --no-deps --upgrade -r ./requirements.txt
+
+      # Every other architecture, which should defer to `pip` without any special treatment.
+      - run: python -m pip install -t ./bundled/libs --implementation py --no-deps --upgrade -r ./requirements.txt
+        if: ${{ !startsWith(matrix.os, 'macos')
+          && !(startsWith(matrix.os, 'ubuntu') && !startsWith(matrix.target, 'x86_64') && !endsWith(matrix.target, 'musl'))
+          && !(startsWith(matrix.os, 'ubuntu') && endsWith(matrix.target, 'musl')) }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+
+      - name: Install Node dependencies.
+        run: npm ci
+
+      - name: Package Extension (release)
+        shell: bash
+        run: npx vsce package -o "./dist/zubanls-${{ matrix.code-target }}.vsix" --target ${{ matrix.code-target }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-${{ matrix.target }}
+          path: ./dist
+
+  # Phase 3: Publish the built extension to the Marketplace.
+  publish-code-marketplace:
+    name: "Publish (Code Marketplace)"
+    needs: ["build"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Nodejs
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Download all built artifacts.
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-apple-darwin
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-apple-darwin
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-unknown-linux-gnu
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-unknown-linux-gnu
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-arm-unknown-linux-gnueabihf
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-pc-windows-msvc
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-pc-windows-msvc
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-unknown-linux-musl
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-unknown-linux-musl
+          path: dist
+      - run: ls -al ./dist
+
+      - name: Install Node dependencies.
+        run: npm ci
+
+      - name: Publish Extension (Code Marketplace)
+        if: ${{ !inputs.prerelease }}
+        run: npx vsce publish --pat ${{ secrets.MARKETPLACE_TOKEN }} --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
+
+  publish-openvsx:
+    name: "Publish (OpenVSX)"
+    needs: ["build"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Nodejs
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Download all built artifacts.
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-apple-darwin
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-apple-darwin
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-unknown-linux-gnu
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-unknown-linux-gnu
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-arm-unknown-linux-gnueabihf
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-pc-windows-msvc
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-pc-windows-msvc
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-x86_64-unknown-linux-musl
+          path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist-aarch64-unknown-linux-musl
+          path: dist
+      - run: ls -al ./dist
+
+      - name: Install Node dependencies.
+        run: npm ci
+
+      - name: Publish Extension (OpenVSX)
+        run: npx ovsx publish --pat ${{ secrets.OPENVSX_TOKEN }} --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
+        timeout-minutes: 2
