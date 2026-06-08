@@ -202,7 +202,7 @@ jobs:
 
       - name: Publish Extension (Code Marketplace)
         if: ${{ !inputs.prerelease }}
-        run: npx vsce publish --pat ${{ secrets.MARKETPLACE_TOKEN }} --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
+        run: npx vsce publish --pat "${{ secrets.MARKETPLACE_TOKEN }}" --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
 
   publish-openvsx:
     name: "Publish (OpenVSX)"
@@ -260,5 +260,5 @@ jobs:
         run: npm ci
 
       - name: Publish Extension (OpenVSX)
-        run: npx ovsx publish --pat ${{ secrets.OPENVSX_TOKEN }} --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
+        run: npx ovsx publish --pat "${{ secrets.OPENVSX_TOKEN }}" --packagePath ./dist/zubanls-*.vsix ${{ needs.pre-release-check.outputs.pre-release }}
         timeout-minutes: 2
