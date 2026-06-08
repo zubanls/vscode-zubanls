@@ -55,7 +55,7 @@ export async function activate(context: ExtensionContext) {
             JSON.stringify(vscode.workspace.getConfiguration("python.zuban") ?? {}),
         );
 
-        const command = await findCommand(pythonEnv, initializationOptions);
+        const command = await findCommand(context, pythonEnv, initializationOptions);
 
         const loggingVerbosity: string = requireSetting("zuban.loggingVerbosity");
 
@@ -191,6 +191,7 @@ interface InitOptions {
 }
 
 async function findCommand(
+    context: ExtensionContext,
     pythonEnv: PythonEnvironment,
     initializationOptions: InitOptions,
 ): Promise<string> {
@@ -233,9 +234,13 @@ async function findCommand(
             outputChannel.appendLine(`Zuban executable ${pythonExecutable} does not exist`);
         }
     }
-    // const bundledZubanPath = vscode.Uri.joinPath(context.extensionUri, 'bin', executableName);
-    // return bundledZubanPath.fsPath;
 
-    // Step 3: Rely on PATH
+    // Step 3: Try to fall back on bundled
+    const bundledPath = vscode.Uri.joinPath(context.extensionUri, "bundled/bin", zubanBin).fsPath;
+    if (fs.existsSync(bundledPath)) {
+        return bundledPath;
+    }
+
+    // Step 4: Fallback to PATH, which should not happen normally
     return zubanBin;
 }
