@@ -10,6 +10,6 @@ if [[ ! "$version" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
   exit 1
 fi
 
-git tag "$version"
+git tag "v$version"
 git push
 git push --tags
