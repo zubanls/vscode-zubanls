@@ -26,7 +26,7 @@ type Status = {
 /// Update the status bar based on current configuration
 export async function updateStatusBar(client: LanguageClient) {
     const document = vscode.window.activeTextEditor?.document;
-    if (document === null || document?.languageId !== "python") {
+    if (document?.languageId !== "python") {
         statusBarItem?.hide();
         return;
     }
