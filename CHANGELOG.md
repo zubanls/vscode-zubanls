@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.0
+## 0.2.1
 
 Bundle Zuban in the VSCode extension so users do not have to install it anymore.
 
