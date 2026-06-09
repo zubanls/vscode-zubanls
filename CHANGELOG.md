@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.2.0
+
+Bundle Zuban in the VSCode extension so users do not have to install it anymore.
+
 ## 0.1.0
 
 This release was essentially forked from the Pyrefly VSCode extension and
