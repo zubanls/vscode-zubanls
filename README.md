@@ -1,16 +1,26 @@
-# Zuban README
+# Zuban Language Server
 
-A high-performance Python Language server written in Rust.
+[Zuban](https://zuban.com/) is a high-performance Python Language Server and
+type checker implemented in Rust, by the author of [Jedi](https://github.com/davidhalter/jedi).
+Zuban is 20–200× faster than Mypy, while using roughly half the memory and CPU
+compared to Ty and Pyrefly. It offers both a PyRight-like mode and a
+Mypy-compatible mode, which behaves just like Mypy; supporting the same config
+files, command-line flags, and error messages.
+
+Zuban has full LSP (Language Server Protocol) support. Features include
+diagnostics, completions, goto, references, rename, hover, auto-imports and
+document highlights.
 
 Supports Jupyter Notebooks in VSCode as well.
 
 ## Requirements
 
-Zuban should work out of the bugs, since it is bundled with the extension.
+The VSCode extension for Zuban should work out of the box, since Zuban is
+bundled with the extension.
 
 Alternatively you can install zuban in a virtual environment. If that specific
-virtualenv is activated in VSCode, Zuban will be loaded from there, so you can
-use a specific Zuban version.
+virtualenv is activated in VSCode, Zuban will automatically load that specific
+Zuban version.
 
 ## Documentation
 
