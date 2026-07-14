@@ -192,6 +192,7 @@ interface InitOptions {
     typeCheckingMode?: string;
     diagnosticMode?: string;
     disableLanguageServices?: boolean;
+    inlayHintMode?: string;
 }
 
 async function findCommand(

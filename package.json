@@ -148,6 +148,16 @@
           ],
           "scope": "resource"
         },
+        "python.zuban.inlayHintMode": {
+          "type": "string",
+          "default": "default",
+          "markdownDescription": "Enables or disables inlay hints.",
+          "enum": [
+            "default",
+            "off"
+          ],
+          "scope": "resource"
+        },
         "zuban.loggingVerbosity": {
           "type": "string",
           "default": "error",

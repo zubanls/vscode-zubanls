@@ -32,6 +32,7 @@ There are a few settings VSCode related settings:
   not type checking and also choose the default mypy mode
 - `python.zuban.disableLanguageServices` to make it possible to only use type checking
 - `python.zuban.diagnosticMode` to enable VSCode to query the workspace diagnostics
+- `python.zuban.inlayHintMode` to disable inlay hints
 - `zuban.executablePath` to enable a custom Zuban executable
 - `zuban.loggingVerbosity` - to pass a value to the `ZUBAN_LOG` environment variable
 
