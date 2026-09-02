@@ -2,6 +2,10 @@
 
 ## 0.2.4
 
+Improve Windows support for environments
+
+## 0.2.4
+
 Add the setting `python.zuban.inlayHintMode` to be able to enable/disable inlay hints
 
 ## 0.2.1
