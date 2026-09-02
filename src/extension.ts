@@ -231,6 +231,13 @@ async function findCommand(
                 outputChannel.appendLine(`Zuban found a Zuban executable at ${zubanPath}`);
                 return zubanPath;
             } else {
+                // On Windows Python executables can be in a subdir:
+                // https://github.com/zubanls/vscode-zubanls/issues/17
+                const zubanPath = path.join(executableDir, "Scripts", zubanBin);
+                if (fs.existsSync(zubanPath)) {
+                    outputChannel.appendLine(`Zuban found a Zuban executable at ${zubanPath}`);
+                    return zubanPath;
+                }
                 outputChannel.appendLine(
                     `Zuban did not find a Zuban executable at ${zubanPath}, falling back to the default`,
                 );
